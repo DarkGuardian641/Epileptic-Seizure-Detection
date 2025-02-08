@@ -60,4 +60,4 @@ This project uses machine learning and deep learning techniques to detect and pr
 ---
 
 ### **Support**
-For issues, contact the maintainer or open a GitHub issue.
+For issues, contact the maintainer or open a GitHub issue.python
