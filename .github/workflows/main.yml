@@ -27,19 +27,25 @@ jobs:
           python -m venv env
           .\env\Scripts\Activate.ps1
           python -m pip install --upgrade pip setuptools wheel
-          # Install necessary packages with error handling
-          pip install --no-cache-dir --ignore-installed scikit-learn==1.6.1 || echo "Ignoring scikit-learn error..."
-          pip install --no-cache-dir --ignore-installed matplotlib==3.10.0 || echo "Ignoring matplotlib error..."
-          pip install --no-cache-dir --ignore-installed seaborn==0.13.2 || echo "Ignoring seaborn error..."
-          pip install --no-cache-dir --ignore-installed Pillow==11.1.0 || echo "Ignoring Pillow error..."
-          pip install --no-cache-dir --ignore-installed fastapi==0.115.7 || echo "Ignoring fastapi error..."
-          pip install --no-cache-dir --ignore-installed Flask==3.1.0 || echo "Ignoring Flask error..."
-          pip install --no-cache-dir --ignore-installed streamlit==1.41.1 || echo "Ignoring streamlit error..."
-          pip install --no-cache-dir --ignore-installed xgboost==2.1.4 || echo "Ignoring xgboost error..."
-          pip install --no-cache-dir --ignore-installed altair==5.5.0 || echo "Ignoring altair error..."
-          pip install --no-cache-dir --ignore-installed tqdm==4.67.1 || echo "Ignoring tqdm error..."
-          pip install --no-cache-dir --ignore-installed tensorflow==2.16.1 keras==3.8.0 || echo "Ignoring TensorFlow/Keras error..."
-          pip install --no-cache-dir --ignore-installed -r requirements.txt || echo "Ignoring requirements.txt errors..."
+          
+          # Filter invalid dependencies before installation
+          $valid_packages = @()
+          Get-Content requirements.txt | ForEach-Object {
+            $package = $_.Trim()
+            if ($package -ne "" -and (python -m pip install --dry-run $package 2>&1 | Select-String "No matching distribution found") -eq $null) {
+              $valid_packages += $package
+            } else {
+              Write-Host "⚠️ Skipping invalid package: $package"
+            }
+          }
+          
+          if ($valid_packages.Count -gt 0) {
+            $valid_packages -join "`n" | Out-File -FilePath filtered_requirements.txt
+            pip install -r filtered_requirements.txt || echo "Ignoring requirements.txt errors..."
+          } else {
+            echo "⚠️ No valid dependencies found!"
+          }
+          
           pip install pytest || echo "Ignoring pytest error..."
         shell: pwsh
       
@@ -74,19 +80,24 @@ jobs:
           python -m venv env
           .\env\Scripts\Activate.ps1
           python -m pip install --upgrade pip setuptools wheel
-          # Install necessary packages with error handling
-          pip install --no-cache-dir --ignore-installed scikit-learn==1.6.1 || echo "Ignoring scikit-learn error..."
-          pip install --no-cache-dir --ignore-installed matplotlib==3.10.0 || echo "Ignoring matplotlib error..."
-          pip install --no-cache-dir --ignore-installed seaborn==0.13.2 || echo "Ignoring seaborn error..."
-          pip install --no-cache-dir --ignore-installed Pillow==11.1.0 || echo "Ignoring Pillow error..."
-          pip install --no-cache-dir --ignore-installed fastapi==0.115.7 || echo "Ignoring fastapi error..."
-          pip install --no-cache-dir --ignore-installed Flask==3.1.0 || echo "Ignoring Flask error..."
-          pip install --no-cache-dir --ignore-installed streamlit==1.41.1 || echo "Ignoring streamlit error..."
-          pip install --no-cache-dir --ignore-installed xgboost==2.1.4 || echo "Ignoring xgboost error..."
-          pip install --no-cache-dir --ignore-installed altair==5.5.0 || echo "Ignoring altair error..."
-          pip install --no-cache-dir --ignore-installed tqdm==4.67.1 || echo "Ignoring tqdm error..."
-          pip install --no-cache-dir --ignore-installed tensorflow==2.16.1 keras==3.8.0 || echo "Ignoring TensorFlow/Keras error..."
-          pip install --no-cache-dir --ignore-installed -r requirements.txt || echo "Ignoring requirements.txt errors..."
+          
+          # Filter invalid dependencies before installation
+          $valid_packages = @()
+          Get-Content requirements.txt | ForEach-Object {
+            $package = $_.Trim()
+            if ($package -ne "" -and (python -m pip install --dry-run $package 2>&1 | Select-String "No matching distribution found") -eq $null) {
+              $valid_packages += $package
+            } else {
+              Write-Host "⚠️ Skipping invalid package: $package"
+            }
+          }
+          
+          if ($valid_packages.Count -gt 0) {
+            $valid_packages -join "`n" | Out-File -FilePath filtered_requirements.txt
+            pip install -r filtered_requirements.txt || echo "Ignoring requirements.txt errors..."
+          } else {
+            echo "⚠️ No valid dependencies found!"
+          }
         shell: pwsh
       
       - name: Train Model
