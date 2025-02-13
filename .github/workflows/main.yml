@@ -23,20 +23,20 @@ jobs:
 
       - name: Set Up Virtual Environment
         run: |
-          python -m venv venv
-          source venv/bin/activate
+          python -m venv env
+          source env/bin/activate
           pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
           pip install pytest
 
       - name: Verify Dependencies
         run: |
-          source venv/bin/activate
+          source env/bin/activate
           python -c "import numpy, tensorflow, pandas, pytest; print('All imports successful')"
 
       - name: Run Tests
         run: |
-          source venv/bin/activate
+          source env/bin/activate
           pytest tests/ || true  # Prevent pipeline from failing if no tests exist
 
   train_model:
@@ -54,14 +54,14 @@ jobs:
 
       - name: Set Up Virtual Environment
         run: |
-          python -m venv venv
-          source venv/bin/activate
+          python -m venv env
+          source env/bin/activate
           pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
 
       - name: Train Model
         run: |
-          source venv/bin/activate
+          source env/bin/activate
           if [ -f models/model_training.py ]; then
             python models/model_training.py
           else
