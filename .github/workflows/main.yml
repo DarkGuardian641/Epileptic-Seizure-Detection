@@ -27,7 +27,8 @@ jobs:
           python -m venv env
           .\env\Scripts\activate
           python -m pip install --upgrade pip setuptools wheel
-          # Install key dependencies first
+          # Install TensorFlow and key dependencies first
+          pip install tensorflow==2.18.0
           pip install numpy==2.0.2
           pip install pandas==2.2.3
           pip install scikit-learn==1.6.1
@@ -41,19 +42,17 @@ jobs:
           .\env\Scripts\activate
           python -c "
           import sys
-          import pkg_resources
           
           def check_import(package):
               try:
                   module = __import__(package)
-                  version = pkg_resources.get_distribution(package).version
-                  print(f'✓ {package} (version {version})')
+                  print(f'[PASS] {package}')
                   return True
               except ImportError as e:
-                  print(f'✗ {package} - Error: {str(e)}')
+                  print(f'[FAIL] {package} - Error: {str(e)}')
                   return False
               except Exception as e:
-                  print(f'? {package} - Unexpected error: {str(e)}')
+                  print(f'[ERROR] {package} - Unexpected error: {str(e)}')
                   return False
           
           packages = [
@@ -115,7 +114,8 @@ jobs:
           python -m venv env
           .\env\Scripts\activate
           python -m pip install --upgrade pip setuptools wheel
-          # Install key dependencies first
+          # Install TensorFlow and key dependencies first
+          pip install tensorflow==2.18.0
           pip install numpy==2.0.2
           pip install pandas==2.2.3
           pip install scikit-learn==1.6.1
