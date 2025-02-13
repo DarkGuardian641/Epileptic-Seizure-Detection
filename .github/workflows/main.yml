@@ -132,6 +132,7 @@ jobs:
           pip install xgboost==2.1.4
           pip install altair==5.5.0
           pip install tqdm==4.67.1
+          pip install keras==3.8.0
           # Install remaining requirements
           pip install -r requirements.txt
         shell: pwsh
