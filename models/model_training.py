@@ -10,7 +10,7 @@ from sklearn.metrics import accuracy_score, classification_report
 import warnings
 warnings.filterwarnings('ignore')
 
-# Load dataset
+# Load the dataset
 df = pd.read_csv("data/raw/Epileptic_Seizure_Recognition.csv")
 
 # Preprocessing
