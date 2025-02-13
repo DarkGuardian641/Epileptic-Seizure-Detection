@@ -25,9 +25,9 @@ jobs:
       - name: Set Up Virtual Environment
         run: |
           python -m venv env
-          .\env\Scripts\activate
+          .\env\Scripts\Activate.ps1
           python -m pip install --upgrade pip setuptools wheel
-          # Install packages with specific import names
+          # Install necessary packages
           pip install scikit-learn==1.6.1
           pip install matplotlib==3.10.0
           pip install seaborn==0.13.2
@@ -38,14 +38,14 @@ jobs:
           pip install xgboost==2.1.4
           pip install altair==5.5.0
           pip install tqdm==4.67.1
-          # Install remaining requirements
+          pip install tensorflow==2.16.1 keras==3.8.0
           pip install -r requirements.txt
           pip install pytest
         shell: pwsh
       
       - name: Verify All Dependencies
         run: |
-          .\env\Scripts\activate
+          .\env\Scripts\Activate.ps1
           python -c "
           import sys
           
@@ -98,7 +98,7 @@ jobs:
       
       - name: Run Tests
         run: |
-          .\env\Scripts\activate
+          .\env\Scripts\Activate.ps1
           pytest tests/ || true
         shell: pwsh
 
@@ -119,9 +119,9 @@ jobs:
       - name: Set Up Virtual Environment
         run: |
           python -m venv env
-          .\env\Scripts\activate
+          .\env\Scripts\Activate.ps1
           python -m pip install --upgrade pip setuptools wheel
-          # Install packages explicitly
+          # Install necessary packages
           pip install scikit-learn==1.6.1
           pip install matplotlib==3.10.0
           pip install seaborn==0.13.2
@@ -132,14 +132,13 @@ jobs:
           pip install xgboost==2.1.4
           pip install altair==5.5.0
           pip install tqdm==4.67.1
-          pip install keras==3.8.0
-          # Install remaining requirements
+          pip install tensorflow==2.16.1 keras==3.8.0
           pip install -r requirements.txt
         shell: pwsh
       
       - name: Train Model
         run: |
-          .\env\Scripts\activate
+          .\env\Scripts\Activate.ps1
           if (Test-Path models/model_training.py) {
             python models/model_training.py
           } else {
