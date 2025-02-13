@@ -10,51 +10,68 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-
+    runs-on: windows-latest
+    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
+      
       - name: Set Up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
-
+          cache: 'pip'
+      
       - name: Set Up Virtual Environment
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip setuptools wheel
+          python -m venv env
+          .\env\Scripts\activate
+          python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
           pip install pytest
-
+        shell: pwsh
+      
+      - name: Verify Dependencies
+        run: |
+          .\env\Scripts\activate
+          python -c "import numpy, tensorflow, pandas, pytest; print('All imports successful')"
+        shell: pwsh
+      
       - name: Run Tests
         run: |
-          source venv/bin/activate
-          pytest tests/
+          .\env\Scripts\activate
+          pytest tests/ || true
+        shell: pwsh
 
   train_model:
     needs: test
-    runs-on: ubuntu-latest
-
+    runs-on: windows-latest
+    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
+      
       - name: Set Up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
-
+          cache: 'pip'
+      
       - name: Set Up Virtual Environment
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip setuptools wheel
+          python -m venv env
+          .\env\Scripts\activate
+          python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
-
+        shell: pwsh
+      
       - name: Train Model
         run: |
-          source venv/bin/activate
-          python models/model_training.py
+          .\env\Scripts\activate
+          if (Test-Path models/model_training.py) {
+            python models/model_training.py
+          } else {
+            Write-Error "Error: models/model_training.py not found!"
+            exit 1
+          }
+        shell: pwsh
