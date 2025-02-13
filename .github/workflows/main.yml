@@ -27,14 +27,67 @@ jobs:
           python -m venv env
           .\env\Scripts\activate
           python -m pip install --upgrade pip setuptools wheel
+          # Install key dependencies first
+          pip install numpy==2.0.2
+          pip install pandas==2.2.3
+          pip install scikit-learn==1.6.1
+          # Install remaining requirements
           pip install -r requirements.txt
           pip install pytest
         shell: pwsh
       
-      - name: Verify Dependencies
+      - name: Verify All Dependencies
         run: |
           .\env\Scripts\activate
-          python -c "import numpy, tensorflow, pandas, pytest; print('All imports successful')"
+          python -c "
+          import sys
+          import pkg_resources
+          
+          def check_import(package):
+              try:
+                  module = __import__(package)
+                  version = pkg_resources.get_distribution(package).version
+                  print(f'✓ {package} (version {version})')
+                  return True
+              except ImportError as e:
+                  print(f'✗ {package} - Error: {str(e)}')
+                  return False
+              except Exception as e:
+                  print(f'? {package} - Unexpected error: {str(e)}')
+                  return False
+          
+          packages = [
+              'numpy',
+              'pandas',
+              'tensorflow',
+              'keras',
+              'scikit-learn',
+              'matplotlib',
+              'seaborn',
+              'pillow',
+              'scipy',
+              'fastapi',
+              'flask',
+              'streamlit',
+              'pytest',
+              'xgboost',
+              'altair',
+              'joblib',
+              'tqdm'
+          ]
+          
+          print('Checking all dependencies...\n')
+          failed = False
+          for package in packages:
+              if not check_import(package):
+                  failed = True
+          
+          if failed:
+              print('\nSome dependencies failed to import!')
+              sys.exit(1)
+          else:
+              print('\nAll dependencies successfully imported!')
+          "
         shell: pwsh
       
       - name: Run Tests
@@ -62,6 +115,11 @@ jobs:
           python -m venv env
           .\env\Scripts\activate
           python -m pip install --upgrade pip setuptools wheel
+          # Install key dependencies first
+          pip install numpy==2.0.2
+          pip install pandas==2.2.3
+          pip install scikit-learn==1.6.1
+          # Install remaining requirements
           pip install -r requirements.txt
         shell: pwsh
       
