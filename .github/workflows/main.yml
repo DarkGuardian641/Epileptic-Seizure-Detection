@@ -27,11 +27,17 @@ jobs:
           python -m venv env
           .\env\Scripts\activate
           python -m pip install --upgrade pip setuptools wheel
-          # Install TensorFlow and key dependencies first
-          pip install tensorflow==2.18.0
-          pip install numpy==2.0.2
-          pip install pandas==2.2.3
+          # Install packages with specific import names
           pip install scikit-learn==1.6.1
+          pip install matplotlib==3.10.0
+          pip install seaborn==0.13.2
+          pip install Pillow==11.1.0
+          pip install fastapi==0.115.7
+          pip install Flask==3.1.0
+          pip install streamlit==1.41.1
+          pip install xgboost==2.1.4
+          pip install altair==5.5.0
+          pip install tqdm==4.67.1
           # Install remaining requirements
           pip install -r requirements.txt
           pip install pytest
@@ -43,42 +49,43 @@ jobs:
           python -c "
           import sys
           
-          def check_import(package):
+          def check_import(import_name, package_name):
               try:
-                  module = __import__(package)
-                  print(f'[PASS] {package}')
+                  module = __import__(import_name)
+                  print(f'[PASS] {package_name}')
                   return True
               except ImportError as e:
-                  print(f'[FAIL] {package} - Error: {str(e)}')
+                  print(f'[FAIL] {package_name} - Error: {str(e)}')
                   return False
               except Exception as e:
-                  print(f'[ERROR] {package} - Unexpected error: {str(e)}')
+                  print(f'[ERROR] {package_name} - Unexpected error: {str(e)}')
                   return False
           
+          # Tuple of (import_name, package_name)
           packages = [
-              'numpy',
-              'pandas',
-              'tensorflow',
-              'keras',
-              'scikit-learn',
-              'matplotlib',
-              'seaborn',
-              'pillow',
-              'scipy',
-              'fastapi',
-              'flask',
-              'streamlit',
-              'pytest',
-              'xgboost',
-              'altair',
-              'joblib',
-              'tqdm'
+              ('numpy', 'numpy'),
+              ('pandas', 'pandas'),
+              ('tensorflow', 'tensorflow'),
+              ('keras', 'keras'),
+              ('sklearn', 'scikit-learn'),
+              ('matplotlib', 'matplotlib'),
+              ('seaborn', 'seaborn'),
+              ('PIL', 'pillow'),
+              ('scipy', 'scipy'),
+              ('fastapi', 'fastapi'),
+              ('flask', 'Flask'),
+              ('streamlit', 'streamlit'),
+              ('pytest', 'pytest'),
+              ('xgboost', 'xgboost'),
+              ('altair', 'altair'),
+              ('joblib', 'joblib'),
+              ('tqdm', 'tqdm')
           ]
           
           print('Checking all dependencies...\n')
           failed = False
-          for package in packages:
-              if not check_import(package):
+          for import_name, package_name in packages:
+              if not check_import(import_name, package_name):
                   failed = True
           
           if failed:
@@ -114,11 +121,17 @@ jobs:
           python -m venv env
           .\env\Scripts\activate
           python -m pip install --upgrade pip setuptools wheel
-          # Install TensorFlow and key dependencies first
-          pip install tensorflow==2.18.0
-          pip install numpy==2.0.2
-          pip install pandas==2.2.3
+          # Install packages explicitly
           pip install scikit-learn==1.6.1
+          pip install matplotlib==3.10.0
+          pip install seaborn==0.13.2
+          pip install Pillow==11.1.0
+          pip install fastapi==0.115.7
+          pip install Flask==3.1.0
+          pip install streamlit==1.41.1
+          pip install xgboost==2.1.4
+          pip install altair==5.5.0
+          pip install tqdm==4.67.1
           # Install remaining requirements
           pip install -r requirements.txt
         shell: pwsh
